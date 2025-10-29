@@ -180,10 +180,6 @@ Private — All rights reserved.
 ## 👨‍💻 Author
 Reezma Hanan — GitHub: [@reezmahanan](https://github.com/reezmahanan)
 
----
 
-If you'd like, I can:
-- Personalize other places (e.g., default account names, project URLs),
-- Add a quick-start script or sample .env template,
-- Or convert the installation steps into a single automated script for XAMPP. Which would you prefer?
 ```
+
