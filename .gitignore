@@ -1,0 +1,46 @@
+# Ignore configuration files with sensitive data
+php/config.php
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Database dumps (optional)
+*.sql.backup
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Node modules (if you add npm later)
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Update scripts (temporary)
+update-images.php
+# Local cleanup backup
+cleanup-backup/
