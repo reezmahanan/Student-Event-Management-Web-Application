@@ -167,19 +167,11 @@ By default, event images are linked from Unsplash. To use local images:
 
 ---
 
-## 🤝 Contributing
-This repository is currently private. If you'd like to contribute, please contact the project owner.
-
----
-
-## 📄 License
-Private — All rights reserved.
-
----
 
 ## 👨‍💻 Author
 Reezma Hanan — GitHub: [@reezmahanan](https://github.com/reezmahanan)
 
 
 ```
+
 
