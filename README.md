@@ -1,24 +1,24 @@
-# 🎓 EventHub - Student Event Management System
+# 🎓 EventHub — Student Event Management System
 
-A comprehensive **web-based event management system** for educational institutions, built using **PHP** and **MySQL**.
+A comprehensive web-based event management system for educational institutions, built with PHP and MySQL.
 
 ---
 
 ## 🌟 Features
 
-### 🎯 For Students
-- 📅 **Event Calendar** – Browse upcoming events with beautiful images  
-- 🔐 **User Registration & Login** – Secure authentication system  
-- ✅ **Event Registration** – Register for events with one click  
-- 👤 **User Profile** – View registered events and manage your account  
-- ⭐ **Event Feedback** – Rate and review attended events  
+### For Students
+- 📅 Event Calendar — Browse upcoming events with images  
+- 🔐 User Registration & Login — Secure authentication  
+- ✅ Event Registration — Register for events with one click  
+- 👤 User Profile — View registered events and manage your account  
+- ⭐ Event Feedback — Rate and review attended events
 
-### 🧑‍💼 For Administrators
-- 📊 **Dashboard** – Overview of all events, users, and statistics  
-- 📅 **Calendar Management** – Create, edit, delete events with month navigation  
-- 👥 **User Management** – View and manage student accounts  
-- 📸 **Event Images** – Add beautiful images to events  
-- 📈 **Analytics** – Track registrations, feedback, and engagement  
+### For Administrators
+- 📊 Dashboard — Overview of events, users, and statistics  
+- 📅 Calendar Management — Create, edit, delete events with month navigation  
+- 👥 User Management — View and manage student accounts  
+- 📸 Event Images — Upload or link images for events  
+- 📈 Analytics — Track registrations, feedback, and engagement
 
 ---
 
@@ -26,155 +26,164 @@ A comprehensive **web-based event management system** for educational institutio
 - **Frontend:** HTML5, CSS3, Bootstrap 5, JavaScript  
 - **Backend:** PHP 8.0+  
 - **Database:** MySQL / MariaDB  
-- **Server:** Apache (XAMPP recommended)  
+- **Server:** Apache (XAMPP recommended)
 
 ---
 
 ## 📋 Prerequisites
 - XAMPP (or similar) with Apache and MySQL  
 - PHP 8.0 or higher  
-- MySQL 5.7 or higher (running on port **3307**)  
+- MySQL 5.7 or higher (project examples use port **3307**, change if your setup differs)
 
 ---
 
 ## 🚀 Installation
 
-1. **Clone the repository**
+1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/eventhub.git
-Move to XAMPP htdocs
+   git clone https://github.com/reezmahanan/Student-Event-Management-Web-Application.git eventhub
+   ```
 
-cp -r eventhub C:/xampp/htdocs/project
+2. Move the project into your web server document root:
+   - On Windows (XAMPP):
+     - Copy the folder to C:\xampp\htdocs\project (or any folder name you prefer):
+       ```powershell
+       xcopy /E /I eventhub C:\xampp\htdocs\project
+       ```
+     - Or using File Explorer copy/paste.
+   - On Linux / macOS:
+     ```bash
+     cp -r eventhub /opt/lampp/htdocs/project    # or your web root
+     ```
 
+3. Create the database:
+   - Open phpMyAdmin: http://localhost/phpmyadmin
+   - Create a new database named `eventhub`
+   - Import the SQL schema from the project root file `db_structure.sql`
 
-Create Database
+4. Configure database connection:
+   - Edit `php/config.php` (or the config file your project uses) and update credentials:
+     ```php
+     private $host = "localhost";
+     private $port = "3307";      // change to 3306 if your MySQL uses the default port
+     private $db_name = "eventhub";
+     private $username = "root";
+     private $password = "";
+     ```
 
-Open phpMyAdmin → http://localhost/phpmyadmin
-
-Create a new database named eventhub
-
-Import db_structure.sql located in the project folder
-
-Configure Database Connection
-Edit php/config.php:
-
-private $host = "localhost";
-private $port = "3307";
-private $db_name = "eventhub";
-private $username = "root";
-private $password = "";
-
-
-Access the Website
-
-Homepage → http://localhost/project/
-
-Admin Dashboard → http://localhost/project/admin/dashboard.php
-
-🔑 Default Login Credentials
-👨‍💻 Admin Account
-Email: admin@eventhub.com
-Password: password123
-
-🧑‍🎓 Student Account
-Email: john@student.com
-Password: password123
-
-
-⚠️ Important: Change these passwords after your first login!
-
-🧱 Database Schema
-
-The system includes 8 main tables:
-
-Table Name	Description
-users	User accounts (students and admins)
-events	Event details with images
-registrations	Event registrations
-feedback	Event feedback and ratings
-volunteers	Event volunteer applications
-event_categories	Event categorization
-event_budgets	Budget tracking
-notifications	User notifications
-🎨 Key UI Features
-✨ Animated Homepage
-
-Dark-themed design
-
-Loading animation
-
-Glassmorphism effects
-
-Smooth transitions and parallax effects
-
-🗓️ Event Calendar
-
-Month-by-month navigation
-
-Event images from Unsplash
-
-Filter by date and category
-
-Fully responsive layout
-
-🧭 Admin Dashboard
-
-Real-time statistics
-
-Quick action buttons
-
-Calendar view event management
-
-User engagement analytics
-
-📁 Project Structure
-/index.php              - Homepage
-/profile.php            - User Profile
-/db_structure.sql/      - Database SQL file
-    ├── events-calendar.php  - Event listing
-    ├── login.php            - Login page
-    └── register.php         - Registration page
-/admin/
-    ├── dashboard.php        - Admin home
-    ├── manage-events.php    - Event management
-    └── create-event.php     - Create new events
-
-⚙️ Configuration
-🔧 Database Port
-
-The default MySQL port is 3307 (XAMPP default).
-If your MySQL runs on a different port:
-
-Edit php/config.php
-
-Change:
-
-private $port = "3306"; // Your MySQL port
-
-🖼️ Image URLs
-
-Events use Unsplash images by default.
-To use custom images:
-
-Upload images to assets/images/
-
-Update the image_url field in the database
-
-🤝 Contributing
-
-This is a private repository.
-Contact the project owner for contribution guidelines.
-
-📄 License
-
-Private – All rights reserved
-
-👨‍💻 Author
-
-Your Name
-GitHub: @yourusername
-
+5. Access the website:
+   - Homepage: http://localhost/project/
+   - Admin Dashboard: http://localhost/project/admin/dashboard.php
 
 ---
 
-Would you like me to **personalize this README** with your name *Reezma Hanan* and a proper GitHub profile
+## 🔑 Default Login Credentials
+
+> Important: Change these passwords after first login.
+
+### Admin
+- Email: `admin@eventhub.com`  
+- Password: `password123`
+
+### Student
+- Email: `john@student.com`  
+- Password: `password123`
+
+---
+
+## 📊 Database Schema
+
+Main tables included:
+- `users` — User accounts (students and admins)  
+- `events` — Event details with images  
+- `registrations` — Event registrations  
+- `feedback` — Event feedback and ratings  
+- `volunteers` — Event volunteer applications  
+- `event_categories` — Event categorization  
+- `event_budgets` — Budget tracking  
+- `notifications` — User notifications
+
+(See `db_structure.sql` for full table definitions.)
+
+---
+
+## 🎨 Key UI / UX Features
+- Animated, dark-themed homepage with loading animation  
+- Glassmorphism effects, smooth transitions and parallax effects  
+- Responsive calendar with month-by-month navigation and filters  
+- Event images pulled from Unsplash by default (can be replaced with local images)
+
+---
+
+## 🗓️ Event Calendar
+- Month navigation (Previous / Next)  
+- Event thumbnails (Unsplash by default)  
+- Filter by date and category  
+- Responsive layout for mobile and desktop
+
+---
+
+## 🧭 Admin Dashboard
+- Real-time statistics and quick action buttons  
+- Calendar view for event management  
+- User engagement and registration analytics
+
+---
+
+## 📁 Project Structure (example)
+```
+/index.php                - Homepage
+/profile.php              - User profile
+/db_structure.sql         - Database schema SQL file
+/events-calendar.php      - Event listing
+/login.php                - Login page
+/register.php             - Registration page
+/admin/
+    ├── dashboard.php     - Admin home
+    ├── manage-events.php - Event management
+    └── create-event.php  - Create new events
+/assets/
+    ├── css/
+    ├── js/
+    └── images/
+php/
+    └── config.php         - Database configuration
+```
+
+---
+
+## 🔧 Configuration
+
+### Database Port
+If your MySQL server uses a different port than the default shown, edit `php/config.php` and update:
+```php
+private $port = "3306"; // or your MySQL port
+```
+
+### Images
+By default, event images are linked from Unsplash. To use local images:
+1. Upload images to `assets/images/`
+2. Update the `image_url` (or image field) in the `events` table to point to your uploaded files (e.g., `assets/images/my-event.jpg`)
+
+---
+
+## 🤝 Contributing
+This repository is currently private. If you'd like to contribute, please contact the project owner.
+
+---
+
+## 📄 License
+Private — All rights reserved.
+
+---
+
+## 👨‍💻 Author
+Reezma Hanan — GitHub: [@reezmahanan](https://github.com/reezmahanan)
+
+---
+
+If you'd like, I can:
+- Personalize other places (e.g., default account names, project URLs),
+- Add a quick-start script or sample .env template,
+- Or convert the installation steps into a single automated script for XAMPP. Which would you prefer?
+```
