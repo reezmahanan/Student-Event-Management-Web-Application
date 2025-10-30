@@ -63,7 +63,10 @@ A web application for managing college/university events. Students can browse an
 ## Default Admin Credentials (example)
 - Email: `admin@eventhub.com`
 - Password: `password123`
-⚠️ Replace default credentials after first login. Use password_hash() to generate secure hashes before inserting into the DB.
+
+## Default Students Credentials (example)
+- Email: `jane@student.com`
+- Password: `password123`  
 
 ## Database Tables
 - `users` - Student and admin accounts
@@ -86,13 +89,9 @@ A web application for managing college/university events. Students can browse an
 - Change MySQL port in `php/config.php` if necessary.
 - Events use Unsplash images by default; to use local images upload them to `assets/images/` and update `image_url` in DB.
 
-## Contributing
-This is a private repository. Contact the owner for contribution details.
-
-## License
-Private - All rights reserved
 
 ## Author
 **reezmahanan**
 - GitHub: https://github.com/reezmahanan
+
 
