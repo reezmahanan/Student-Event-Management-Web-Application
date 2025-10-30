@@ -32,6 +32,39 @@ if ($next_month > 12) {
 // Get month name
 $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
 
+// Cutoff date for submission (fixed project submission date: 2025-11-11)
+// Events before this date are considered finalized; events on/after this date need manual review
+$default_cutoff = '2025-11-11';
+$cutoff = isset($_GET['cutoff']) ? $_GET['cutoff'] : $default_cutoff;
+// validate cutoff basic format YYYY-MM-DD, fall back to default_cutoff
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $cutoff)) {
+    $cutoff = $default_cutoff;
+}
+
+// Fetch upcoming programs (on or after cutoff) and ended programs (before cutoff)
+// NOTE: previously these queries returned global results (all months). To make the page
+// show results relevant to the selected month/year (so navigation works as expected),
+// filter by MONTH() and YEAR() too.
+$upcoming_programs = [];
+$ended_programs = [];
+if ($db) {
+    try {
+        $up_q = "SELECT * FROM events WHERE event_date >= ? AND MONTH(event_date)=? AND YEAR(event_date)=? ORDER BY event_date ASC, event_time ASC";
+        $up_st = $db->prepare($up_q);
+        $up_st->execute([$cutoff, $current_month, $current_year]);
+        $upcoming_programs = $up_st->fetchAll(PDO::FETCH_ASSOC);
+
+        $past_q = "SELECT * FROM events WHERE event_date < ? AND MONTH(event_date)=? AND YEAR(event_date)=? ORDER BY event_date DESC, event_time DESC";
+        $past_st = $db->prepare($past_q);
+        $past_st->execute([$cutoff, $current_month, $current_year]);
+        $ended_programs = $past_st->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        // ignore and fall back to empty arrays
+        $upcoming_programs = [];
+        $ended_programs = [];
+    }
+}
+
 // Function to get events for specific month
 function getEventsForMonth($month, $year) {
     global $db;
@@ -52,6 +85,9 @@ function getEventsForMonth($month, $year) {
         return [];
     }
 }
+
+// Today's date in site timezone
+$today = date('Y-m-d');
 
 // Get events for current month
 try {
@@ -135,6 +171,8 @@ try {
                 </a>
             </div>
 
+            <!-- Removed submission-cutoff sections as requested: display scheduled programs only -->
+
             <!-- Events Timeline -->
             <div class="events-timeline">
                 <h4 class="mb-4">Upcoming Events Timeline</h4>
@@ -181,7 +219,21 @@ try {
                     </div>
                     
                     <div class="events-list">
-                        <?php foreach ($date_events as $event): ?>
+                        <?php
+                        // Dedupe events for this date by title+time to avoid duplicate listings
+                        $unique_events = [];
+                        $seen_keys = [];
+                        foreach ($date_events as $event) {
+                            $key = mb_strtolower(trim($event['title'])) . '|' . date('H:i', strtotime($event['event_time']));
+                            if (!in_array($key, $seen_keys, true)) {
+                                $seen_keys[] = $key;
+                                $unique_events[] = $event;
+                            }
+                        }
+                        foreach ($unique_events as $event):
+                            $event_date_only = date('Y-m-d', strtotime($event['event_date']));
+                            $event_is_past = ($event_date_only < $today);
+                        ?>
                         <div class="event-item">
                             <div class="row align-items-center">
                                 <?php if (!empty($event['image_url'])): ?>
@@ -207,15 +259,19 @@ try {
                                 <div class="col-md-3 text-end">
                                     <span class="badge bg-primary mb-2"><?php echo htmlspecialchars($event['organizer']); ?></span>
                                     <br>
-                                    <?php if (isLoggedIn()): ?>
-                                        <form method="POST" action="php/events.php" class="d-inline">
-                                            <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
-                                            <button type="submit" name="register_event" class="btn btn-sm btn-success">
-                                                <i class="fas fa-check"></i> Register
-                                            </button>
-                                        </form>
+                                    <?php if ($event_is_past): ?>
+                                        <span class="text-muted small">Event Ended</span>
                                     <?php else: ?>
-                                        <a href="login.php" class="btn btn-sm btn-outline-primary">Login to Register</a>
+                                        <?php if (isLoggedIn()): ?>
+                                            <form method="POST" action="php/events.php" class="d-inline">
+                                                <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+                                                <button type="submit" name="register_event" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check"></i> Register
+                                                </button>
+                                            </form>
+                                        <?php else: ?>
+                                            <a href="login.php" class="btn btn-sm btn-outline-primary">Login to Register</a>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
                             </div>

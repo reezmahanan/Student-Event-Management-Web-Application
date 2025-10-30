@@ -6,6 +6,11 @@ if (!isLoggedIn() || !isAdmin()) {
     exit();
 }
 
+// Ensure a CSRF token for safe form submissions
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
+}
+
 // Get current month and year from URL or default to current
 $current_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
 $current_year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
@@ -27,7 +32,13 @@ if ($next_month > 12) {
 
 // Attempt to read events from DB safely
 try {
-    $events_query = "SELECT * FROM events ORDER BY event_date ASC, event_time ASC";
+    $events_query = "SELECT e.*, 
+                     COALESCE(SUM(eb.estimated_cost), 0) as total_budget,
+                     COALESCE(SUM(eb.actual_cost), 0) as total_actual_cost
+                     FROM events e
+                     LEFT JOIN event_budgets eb ON e.event_id = eb.event_id
+                     GROUP BY e.event_id
+                     ORDER BY e.event_date ASC, e.event_time ASC";
     $events_stmt = $db->query($events_query);
     $all_events = $events_stmt ? $events_stmt->fetchAll(PDO::FETCH_ASSOC) : [];
     
@@ -196,6 +207,12 @@ $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
                 <span class="badge bg-primary"><?php echo $month_count; ?></span>
             </h4>
 
+            <?php if (!empty($_SESSION['flash_message'])): ?>
+                <div class="alert alert-info">
+                    <?php echo htmlspecialchars($_SESSION['flash_message']); unset($_SESSION['flash_message']); ?>
+                </div>
+            <?php endif; ?>
+
             <?php if (empty($month_events)): ?>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i> No events scheduled for this month.
@@ -218,6 +235,9 @@ $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
                         <div class="col-md-5">
                             <h5 class="mb-1">
                                 <?php echo htmlspecialchars($event['title']); ?>
+                                <?php if (!empty($event['total_budget']) && $event['total_budget'] > 0): ?>
+                                    <small class="text-muted ms-2">Budget: $<?php echo number_format((float)$event['total_budget'], 2); ?></small>
+                                <?php endif; ?>
                                 <?php if ($is_past): ?>
                                     <span class="badge bg-secondary">Past</span>
                                 <?php else: ?>
@@ -242,13 +262,9 @@ $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <a href="view-registrations.php?id=<?php echo $event['event_id']; ?>" 
-                               class="btn btn-sm btn-info me-1" title="View Registrations">
+                               class="btn btn-sm btn-info" title="View Registrations">
                                 <i class="fas fa-users"></i>
                             </a>
-                            <button onclick="deleteEvent(<?php echo $event['event_id']; ?>)" 
-                                    class="btn btn-sm btn-danger" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -265,6 +281,7 @@ $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
                         <tr>
                             <th>Event</th>
                             <th>Date</th>
+                            <th>Budget</th>
                             <th>Venue</th>
                             <th>Participants</th>
                             <th>Status</th>
@@ -283,6 +300,7 @@ $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
                             <tr>
                                 <td><strong><?php echo htmlspecialchars($event['title']); ?></strong></td>
                                 <td><?php echo date('M d, Y', strtotime($event['event_date'])); ?></td>
+                                <td><?php echo (!empty($event['total_budget']) && $event['total_budget'] > 0) ? '$' . number_format((float)$event['total_budget'],2) : '-'; ?></td>
                                 <td><?php echo htmlspecialchars($event['venue']); ?></td>
                                 <td><?php echo $event['current_participants'] ?? 0; ?>/<?php echo $event['max_participants']; ?></td>
                                 <td>
@@ -308,13 +326,5 @@ $month_name = date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year));
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-    function deleteEvent(eventId) {
-        if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
-            // Add AJAX delete functionality here
-            window.location.href = 'delete-event.php?id=' + eventId;
-        }
-    }
-    </script>
 </body>
 </html>
