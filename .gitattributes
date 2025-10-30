@@ -1,0 +1,14 @@
+# Ensure PHP files are detected as PHP
+*.php linguist-language=PHP
+
+# Mark SQL and sample data as SQL
+*.sql linguist-language=SQL
+
+# Treat backup/legacy folders as vendored (exclude from language stats)
+cleanup-backup/** linguist-vendored
+db_structure.sql/** linguist-vendored
+
+# If there are any generated files or IDE metadata, mark them as vendored too
+.vscode/** linguist-vendored
+.idea/** linguist-vendored
+.DS_Store linguist-vendored
