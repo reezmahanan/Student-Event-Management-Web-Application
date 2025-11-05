@@ -14,11 +14,12 @@ try {
         FROM volunteers v
         LEFT JOIN users u ON v.user_id = u.user_id
         LEFT JOIN events e ON v.event_id = e.event_id
-        ORDER BY v.created_at DESC
+        ORDER BY v.applied_at DESC
     ");
     $volunteers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $volunteers = [];
+    $error_message = $e->getMessage();
 }
 
 // Get statistics
@@ -49,13 +50,43 @@ $rejected = count(array_filter($volunteers, function($v) { return ($v['status'] 
         .stat-box {
             text-align: center;
             padding: 20px;
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 10px;
             margin-bottom: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #dee2e6;
+        }
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         }
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
+            margin: 10px 0;
+        }
+        .table-hover tbody tr {
+            transition: background-color 0.2s;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        #searchInput {
+            border-radius: 25px;
+            padding: 12px 20px;
+            border: 2px solid #dee2e6;
+            transition: border-color 0.3s;
+        }
+        #searchInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-group .btn {
+            margin: 0;
+        }
+        .badge {
+            padding: 0.5em 0.75em;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -110,18 +141,29 @@ $rejected = count(array_filter($volunteers, function($v) { return ($v['status'] 
                 </div>
             </div>
 
+            <?php if (isset($error_message)): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Database Error:</strong> <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
+
             <?php if (empty($volunteers)): ?>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i> No volunteer applications yet.
                 </div>
             <?php else: ?>
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search volunteers by name, email, event, or role...">
+                </div>
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-hover" id="volunteersTable">
+                        <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Volunteer Name</th>
+                                <th>#</th>
+                                <th>Volunteer</th>
                                 <th>Event</th>
+                                <th>Role</th>
+                                <th>Hours</th>
                                 <th>Contact</th>
                                 <th>Applied On</th>
                                 <th>Status</th>
@@ -134,40 +176,63 @@ $rejected = count(array_filter($volunteers, function($v) { return ($v['status'] 
                                 <td><?php echo $vol['volunteer_id']; ?></td>
                                 <td>
                                     <strong><?php echo htmlspecialchars($vol['name'] ?? 'N/A'); ?></strong><br>
-                                    <small class="text-muted"><?php echo htmlspecialchars($vol['student_id'] ?? ''); ?></small>
+                                    <small class="text-muted"><i class="fas fa-id-card"></i> <?php echo htmlspecialchars($vol['student_id'] ?? 'N/A'); ?></small>
                                 </td>
                                 <td>
-                                    <?php echo htmlspecialchars($vol['event_title'] ?? 'N/A'); ?><br>
-                                    <small class="text-muted"><?php echo date('M d, Y', strtotime($vol['event_date'] ?? 'now')); ?></small>
+                                    <strong><?php echo htmlspecialchars($vol['event_title'] ?? 'N/A'); ?></strong><br>
+                                    <small class="text-muted"><i class="fas fa-calendar"></i> <?php echo $vol['event_date'] ? date('M d, Y', strtotime($vol['event_date'])) : 'N/A'; ?></small>
                                 </td>
                                 <td>
-                                    <a href="mailto:<?php echo htmlspecialchars($vol['email'] ?? ''); ?>"><?php echo htmlspecialchars($vol['email'] ?? 'N/A'); ?></a><br>
-                                    <small><?php echo htmlspecialchars($vol['contact_number'] ?? 'N/A'); ?></small>
+                                    <span class="badge bg-info text-dark">
+                                        <i class="fas fa-user-tag"></i> <?php echo htmlspecialchars($vol['role'] ?? 'N/A'); ?>
+                                    </span>
                                 </td>
-                                <td><?php echo date('M d, Y', strtotime($vol['created_at'] ?? 'now')); ?></td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-clock"></i> <?php echo htmlspecialchars($vol['hours_committed'] ?? '0'); ?> hrs
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="mailto:<?php echo htmlspecialchars($vol['email'] ?? ''); ?>" class="text-decoration-none">
+                                        <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($vol['email'] ?? 'N/A'); ?>
+                                    </a><br>
+                                    <small class="text-muted"><i class="fas fa-phone"></i> <?php echo htmlspecialchars($vol['contact_number'] ?? 'N/A'); ?></small>
+                                </td>
+                                <td>
+                                    <?php 
+                                    $applied_date = $vol['applied_at'] ?? null;
+                                    echo $applied_date ? date('M d, Y', strtotime($applied_date)) : 'N/A';
+                                    ?>
+                                </td>
                                 <td>
                                     <span class="badge bg-<?php 
                                         echo match($vol['status'] ?? 'pending') {
                                             'approved' => 'success',
                                             'rejected' => 'danger',
-                                            default => 'warning'
+                                            default => 'warning text-dark'
                                         };
                                     ?>">
                                         <?php echo ucfirst($vol['status'] ?? 'pending'); ?>
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="view-user.php?id=<?php echo $vol['user_id']; ?>" class="btn btn-sm btn-info" title="View User">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <?php if (($vol['status'] ?? 'pending') === 'pending'): ?>
-                                        <button class="btn btn-sm btn-success" onclick="updateVolunteerStatus(<?php echo $vol['volunteer_id']; ?>, 'approved')" title="Approve">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="updateVolunteerStatus(<?php echo $vol['volunteer_id']; ?>, 'rejected')" title="Reject">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    <?php endif; ?>
+                                    <div class="btn-group" role="group">
+                                        <a href="view-user.php?id=<?php echo $vol['user_id']; ?>" class="btn btn-sm btn-info" title="View User Profile">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <?php if (($vol['status'] ?? 'pending') === 'pending'): ?>
+                                            <button class="btn btn-sm btn-success" onclick="updateVolunteerStatus(<?php echo $vol['volunteer_id']; ?>, 'approved')" title="Approve Application">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="updateVolunteerStatus(<?php echo $vol['volunteer_id']; ?>, 'rejected')" title="Reject Application">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        <?php elseif ($vol['status'] === 'approved'): ?>
+                                            <button class="btn btn-sm btn-warning" onclick="updateVolunteerStatus(<?php echo $vol['volunteer_id']; ?>, 'pending')" title="Reset to Pending">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -184,7 +249,7 @@ $rejected = count(array_filter($volunteers, function($v) { return ($v['status'] 
 function updateVolunteerStatus(volunteerId, status) {
     const action = status.charAt(0).toUpperCase() + status.slice(1);
     
-    if (!confirm('Are you sure you want to ' + status + ' this volunteer application?')) {
+    if (!confirm('Are you sure you want to ' + action.toLowerCase() + ' this volunteer application?')) {
         return;
     }
     
@@ -209,6 +274,26 @@ function updateVolunteerStatus(volunteerId, status) {
         alert('Network error: ' + error.message);
     });
 }
+
+// Search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#volunteersTable tbody tr');
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+});
 </script>
 </body>
 </html>

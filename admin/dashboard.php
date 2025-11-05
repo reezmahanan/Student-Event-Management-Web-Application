@@ -49,9 +49,25 @@ try {
     $stmt = $db->query("SELECT COUNT(*) FROM volunteers WHERE status = 'pending'");
     $stats['pending_volunteers'] = $stmt->fetchColumn();
     
+    // Approved volunteers
+    $stmt = $db->query("SELECT COUNT(*) FROM volunteers WHERE status = 'approved'");
+    $stats['approved_volunteers'] = $stmt->fetchColumn();
+    
+    // Rejected volunteers
+    $stmt = $db->query("SELECT COUNT(*) FROM volunteers WHERE status = 'rejected'");
+    $stats['rejected_volunteers'] = $stmt->fetchColumn();
+    
     // Total notifications
     $stmt = $db->query("SELECT COUNT(*) FROM notifications");
     $stats['total_notifications'] = $stmt->fetchColumn();
+    
+    // Recent volunteers
+    $stmt = $db->query("SELECT v.*, u.name, u.email, e.title as event_title 
+                        FROM volunteers v 
+                        LEFT JOIN users u ON v.user_id = u.user_id 
+                        LEFT JOIN events e ON v.event_id = e.event_id 
+                        ORDER BY v.applied_at DESC LIMIT 5");
+    $recent_volunteers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Recent users
     $stmt = $db->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 5");
@@ -84,10 +100,13 @@ try {
         'total_feedback' => 0,
         'total_volunteers' => 0,
         'pending_volunteers' => 0,
+        'approved_volunteers' => 0,
+        'rejected_volunteers' => 0,
         'total_notifications' => 0
     ];
     $recent_users = [];
     $recent_events = [];
+    $recent_volunteers = [];
     $events_by_category = [];
 }
 
@@ -160,6 +179,18 @@ $user_name = $_SESSION['user_name'] ?? 'Admin';
         }
         .badge-admin { background: #dc3545; }
         .badge-student { background: #667eea; }
+        .text-purple { color: #764ba2 !important; }
+        .btn-outline-purple {
+            color: #764ba2;
+            border-color: #764ba2;
+        }
+        .btn-outline-purple:hover {
+            background-color: #764ba2;
+            color: white;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 <body>
@@ -228,6 +259,50 @@ $user_name = $_SESSION['user_name'] ?? 'Admin';
                     <div class="stat-number text-warning"><?php echo $stats['total_feedback']; ?></div>
                     <small class="text-muted">
                         <i class="fas fa-comments"></i> Reviews
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volunteer Statistics Row -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card position-relative">
+                    <i class="fas fa-hands-helping stat-icon text-purple"></i>
+                    <div class="stat-label">Total Volunteers</div>
+                    <div class="stat-number text-purple"><?php echo $stats['total_volunteers']; ?></div>
+                    <small class="text-muted">
+                        <i class="fas fa-user-check"></i> All applications
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card position-relative">
+                    <i class="fas fa-clock stat-icon text-warning"></i>
+                    <div class="stat-label">Pending Volunteers</div>
+                    <div class="stat-number text-warning"><?php echo $stats['pending_volunteers']; ?></div>
+                    <small class="text-muted">
+                        <i class="fas fa-hourglass-half"></i> Awaiting review
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card position-relative">
+                    <i class="fas fa-check-circle stat-icon text-success"></i>
+                    <div class="stat-label">Approved Volunteers</div>
+                    <div class="stat-number text-success"><?php echo $stats['approved_volunteers']; ?></div>
+                    <small class="text-muted">
+                        <i class="fas fa-thumbs-up"></i> Active volunteers
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card position-relative">
+                    <i class="fas fa-times-circle stat-icon text-danger"></i>
+                    <div class="stat-label">Rejected Volunteers</div>
+                    <div class="stat-number text-danger"><?php echo $stats['rejected_volunteers']; ?></div>
+                    <small class="text-muted">
+                        <i class="fas fa-ban"></i> Not approved
                     </small>
                 </div>
             </div>
@@ -302,6 +377,88 @@ $user_name = $_SESSION['user_name'] ?? 'Admin';
                                         <td>
                                             <a href="edit-event.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Volunteers Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0"><i class="fas fa-hands-helping text-purple"></i> Recent Volunteer Applications</h4>
+                        <a href="manage-volunteers.php" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-list"></i> View All
+                        </a>
+                    </div>
+                    <?php if (empty($recent_volunteers)): ?>
+                        <p class="text-muted">No volunteer applications yet.</p>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Volunteer</th>
+                                        <th>Email</th>
+                                        <th>Event</th>
+                                        <th>Role</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                        <th>Applied</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($recent_volunteers as $volunteer): ?>
+                                    <tr>
+                                        <td>
+                                            <strong><?php echo htmlspecialchars($volunteer['name'] ?? 'N/A'); ?></strong>
+                                        </td>
+                                        <td>
+                                            <small><?php echo htmlspecialchars($volunteer['email'] ?? 'N/A'); ?></small>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted"><?php echo htmlspecialchars($volunteer['event_title'] ?? 'N/A'); ?></small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info"><?php echo htmlspecialchars($volunteer['role'] ?? 'N/A'); ?></span>
+                                        </td>
+                                        <td>
+                                            <?php echo htmlspecialchars($volunteer['hours_committed'] ?? '0'); ?> hrs
+                                        </td>
+                                        <td>
+                                            <?php 
+                                            $status = $volunteer['status'] ?? 'pending';
+                                            $badge_class = '';
+                                            switch($status) {
+                                                case 'approved':
+                                                    $badge_class = 'bg-success';
+                                                    break;
+                                                case 'rejected':
+                                                    $badge_class = 'bg-danger';
+                                                    break;
+                                                default:
+                                                    $badge_class = 'bg-warning';
+                                            }
+                                            ?>
+                                            <span class="badge <?php echo $badge_class; ?>">
+                                                <?php echo ucfirst($status); ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small><?php echo date('M d, Y', strtotime($volunteer['applied_at'] ?? $volunteer['created_at'] ?? 'now')); ?></small>
+                                        </td>
+                                        <td>
+                                            <a href="manage-volunteers.php" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
                                             </a>
                                         </td>
                                     </tr>
