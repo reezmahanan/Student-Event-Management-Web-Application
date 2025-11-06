@@ -5,6 +5,18 @@ php/config.php
 logs/emails.log
 logs/email-activity.log
 
+# Test and debug files (not needed for production)
+test-*.php
+check_*.php
+debug-*.php
+add_missing_columns.sql
+
+# Documentation files (optional - keep only essential)
+DATABASE_STRUCTURE.md
+EMAIL_IMPLEMENTATION_SUMMARY.md
+EMAIL_QUICKSTART.md
+EMAIL_VISUAL_GUIDE.md
+
 # Temporary files
 *.tmp
 *.log
