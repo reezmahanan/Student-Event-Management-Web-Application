@@ -13,6 +13,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     contact_number VARCHAR(15) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    user_type ENUM('student', 'admin') DEFAULT 'student',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -33,15 +34,25 @@ CREATE TABLE events (
     FOREIGN KEY (created_by) REFERENCES users(user_id)
 );
 
--- Event registrations table
-CREATE TABLE event_registrations (
-    registration_id INT AUTO_INCREMENT PRIMARY KEY,
+-- Event Categories table
+CREATE TABLE event_categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    color_code VARCHAR(7) DEFAULT '#667eea',
+    icon VARCHAR(50) DEFAULT 'fa-calendar',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Event registrations table (main registration table used by application)
+CREATE TABLE registrations (
+    reg_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('confirmed', 'waitlist', 'cancelled') DEFAULT 'confirmed',
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (event_id) REFERENCES events(event_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
     UNIQUE KEY unique_registration (user_id, event_id)
 );
 
@@ -59,15 +70,84 @@ CREATE TABLE volunteers (
     UNIQUE KEY unique_volunteer (user_id, event_id)
 );
 
+-- Feedback table for event feedback
+CREATE TABLE feedback (
+    feedback_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_id INT NOT NULL,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    comments TEXT,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+-- Event Feedback table (alternative feedback system)
+CREATE TABLE event_feedback (
+    feedback_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_id INT NOT NULL,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    comments TEXT,
+    would_recommend TINYINT(1) DEFAULT 1,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+-- Notifications table
+CREATE TABLE notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_id INT DEFAULT NULL,
+    title VARCHAR(200) NOT NULL,
+    message TEXT,
+    type ENUM('info', 'success', 'warning', 'danger') DEFAULT 'info',
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE SET NULL
+);
+
+-- Event Budgets table
+CREATE TABLE event_budgets (
+    budget_id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    item_name VARCHAR(200) NOT NULL,
+    estimated_cost DECIMAL(10, 2) DEFAULT 0.00,
+    actual_cost DECIMAL(10, 2) DEFAULT 0.00,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+-- Event Gallery table
+CREATE TABLE event_gallery (
+    gallery_id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    image_url VARCHAR(500) NOT NULL,
+    caption TEXT,
+    uploaded_by INT DEFAULT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (uploaded_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_user_email ON users(email);
 CREATE INDEX idx_user_student_id ON users(student_id);
 CREATE INDEX idx_event_date ON events(event_date);
-CREATE INDEX idx_registration_user ON event_registrations(user_id);
-CREATE INDEX idx_registration_event ON event_registrations(event_id);
+CREATE INDEX idx_registration_user ON registrations(user_id);
+CREATE INDEX idx_registration_event ON registrations(event_id);
 CREATE INDEX idx_volunteer_user ON volunteers(user_id);
 CREATE INDEX idx_volunteer_event ON volunteers(event_id);
 CREATE INDEX idx_volunteer_status ON volunteers(status);
+CREATE INDEX idx_feedback_user ON feedback(user_id);
+CREATE INDEX idx_feedback_event ON feedback(event_id);
+CREATE INDEX idx_notification_user ON notifications(user_id);
+CREATE INDEX idx_notification_read ON notifications(is_read);
+CREATE INDEX idx_budget_event ON event_budgets(event_id);
+CREATE INDEX idx_gallery_event ON event_gallery(event_id);
 
 -- ----------------------
 -- Sample Data Section
