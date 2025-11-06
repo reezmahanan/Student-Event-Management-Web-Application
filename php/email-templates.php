@@ -88,7 +88,7 @@ function getEmailWrapper($content) {
 <body>
     <div class="email-container">
         <div class="email-header">
-            <h1>📅 EventHub</h1>
+            <h1>EventHub</h1>
         </div>
         <div class="email-body">
             ' . $content . '
@@ -117,7 +117,7 @@ function getRegistrationEmailTemplate($name, $email, $studentId) {
     $eventsUrl = EmailConfig::APP_URL . '/events-calendar.php';
     
     $content = '
-        <h2>Welcome to EventHub! 🎉</h2>
+        <h2>Welcome to EventHub!</h2>
         
         <p>Hi <span class="highlight">' . htmlspecialchars($name) . '</span>,</p>
         
@@ -132,11 +132,11 @@ function getRegistrationEmailTemplate($name, $email, $studentId) {
         
         <p><strong>What you can do now:</strong></p>
         <ul>
-            <li>✅ Browse upcoming events</li>
-            <li>✅ Register for events that interest you</li>
-            <li>✅ View your event registrations</li>
-            <li>✅ Provide feedback on events you attend</li>
-            <li>✅ Apply to volunteer at events</li>
+            <li>Browse upcoming events</li>
+            <li>Register for events that interest you</li>
+            <li>View your event registrations</li>
+            <li>Provide feedback on events you attend</li>
+            <li>Apply to volunteer at events</li>
         </ul>
         
         <div style="text-align: center;">
@@ -172,7 +172,7 @@ function getEventRegistrationEmailTemplate($name, $eventDetails) {
     $eventTime = date('g:i A', strtotime($eventDetails['event_date']));
     
     $content = '
-        <h2>Event Registration Confirmed! ✅</h2>
+        <h2>Event Registration Confirmed!</h2>
         
         <p>Hi <span class="highlight">' . htmlspecialchars($name) . '</span>,</p>
         
@@ -180,18 +180,18 @@ function getEventRegistrationEmailTemplate($name, $eventDetails) {
         
         <div class="info-box">
             <h3 style="margin-top: 0; color: #667eea;">' . htmlspecialchars($eventDetails['title']) . '</h3>
-            <strong>📅 Date:</strong> ' . $eventDate . '<br>
-            <strong>🕐 Time:</strong> ' . $eventTime . '<br>
-            <strong>📍 Location:</strong> ' . htmlspecialchars($eventDetails['location']) . '<br>
+            <strong>Date:</strong> ' . $eventDate . '<br>
+            <strong>Time:</strong> ' . $eventTime . '<br>
+            <strong>Location:</strong> ' . htmlspecialchars($eventDetails['location']) . '<br>
             ' . (!empty($eventDetails['description']) ? '<br><strong>About:</strong> ' . htmlspecialchars(substr($eventDetails['description'], 0, 200)) . '...' : '') . '
         </div>
         
         <p><strong>What\'s Next?</strong></p>
         <ul>
-            <li>📱 Save the date in your calendar</li>
-            <li>📧 You\'ll receive a reminder before the event</li>
-            <li>👥 Arrive on time at the venue</li>
-            <li>💭 Share your feedback after attending</li>
+            <li>Save the date in your calendar</li>
+            <li>You\'ll receive a reminder before the event</li>
+            <li>Arrive on time at the venue</li>
+            <li>Share your feedback after attending</li>
         </ul>
         
         <div style="text-align: center;">
@@ -225,7 +225,7 @@ function getPasswordResetEmailTemplate($name, $resetToken) {
     $resetUrl = EmailConfig::APP_URL . '/reset-password.php?token=' . $resetToken;
     
     $content = '
-        <h2>Password Reset Request 🔒</h2>
+        <h2>Password Reset Request</h2>
         
         <p>Hi <span class="highlight">' . htmlspecialchars($name) . '</span>,</p>
         
@@ -237,7 +237,7 @@ function getPasswordResetEmailTemplate($name, $resetToken) {
             <a href="' . $resetUrl . '" class="button">Reset Your Password</a>
         </div>
         
-        <p style="color: #dc3545;"><strong>⚠️ Important:</strong> This link will expire in 1 hour for security reasons.</p>
+        <p style="color: #dc3545;"><strong>Important:</strong> This link will expire in 1 hour for security reasons.</p>
         
         <p>If the button doesn\'t work, copy and paste this link into your browser:</p>
         <p style="background-color: #f8f9fa; padding: 10px; word-break: break-all; font-size: 12px;">

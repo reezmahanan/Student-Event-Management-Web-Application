@@ -20,7 +20,7 @@ echo "<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <h1>📧 Email System Test</h1>
+    <h1>Email System Test</h1>
 ";
 
 // Test data
@@ -34,12 +34,12 @@ try {
     
     if ($result) {
         echo '<div class="success">
-            ✅ <strong>Success!</strong> Test email has been sent/logged.<br>
+            <strong>Success!</strong> Test email has been sent/logged.<br>
             <strong>Recipient:</strong> ' . htmlspecialchars($testEmail) . '
         </div>';
         
         echo '<div class="info">
-            <strong>📁 Where to Check:</strong><br>
+            <strong>Where to Check:</strong><br>
             Since you\'re on localhost, the email was logged to a file:<br>
             <ul>
                 <li><code>logs/emails.log</code> - Full email HTML content</li>
@@ -54,19 +54,19 @@ try {
         
     } else {
         echo '<div class="error">
-            ❌ <strong>Error!</strong> Email could not be sent.<br>
+            <strong>Error!</strong> Email could not be sent.<br>
             Check <code>logs/email-activity.log</code> for details.
         </div>';
     }
     
 } catch (Exception $e) {
     echo '<div class="error">
-        ❌ <strong>Exception:</strong> ' . htmlspecialchars($e->getMessage()) . '
+        <strong>Exception:</strong> ' . htmlspecialchars($e->getMessage()) . '
     </div>';
 }
 
 echo '
-    <h2>📝 Test Details</h2>
+    <h2>Test Details</h2>
     <pre>';
 echo "Test User: {$testName}\n";
 echo "Email: {$testEmail}\n";
@@ -78,7 +78,7 @@ echo "Is Local Dev: " . (in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '
 echo '</pre>';
 
 echo '
-    <h2>🔧 Configuration</h2>
+    <h2>Configuration</h2>
     <p>To modify email settings, edit <code>php/email-config.php</code></p>
     <ul>
         <li><strong>From Email:</strong> ' . EmailConfig::FROM_EMAIL . '</li>
@@ -86,7 +86,7 @@ echo '
         <li><strong>App URL:</strong> ' . EmailConfig::APP_URL . '</li>
     </ul>
     
-    <h2>📚 Documentation</h2>
+    <h2>Documentation</h2>
     <p>For complete setup instructions, see <code>EMAIL_SETUP.md</code></p>
     
     <p style="margin-top: 30px;">
