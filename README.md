@@ -129,12 +129,13 @@ project/
 - Export reports to PDF
 
 ## Author
-Reez Mahanan  
+Reezma Hanan  
 GitHub: https://github.com/reezmahanan
 
 ## Acknowledgments
 - Bootstrap for UI components
 - Font Awesome for icons
 - XAMPP for development environment
+
 
 
