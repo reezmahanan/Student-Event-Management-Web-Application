@@ -65,7 +65,9 @@
             $error_messages = [
                 'invalid' => 'Invalid email or password.',
                 'required' => 'Please enter both email and password.',
-                'not_found' => 'User account not found.'
+                'not_found' => 'User account not found.',
+                'database' => 'Database connection error. Please check if MySQL is running.',
+                'server' => 'Server error. Please try again later.'
             ];
             $error = htmlspecialchars($_GET['error']);
             $message = $error_messages[$error] ?? 'An error occurred. Please try again.';

@@ -2,7 +2,18 @@
 /**
  * Login Processing Script
  */
+session_start();
 require_once __DIR__ . '/config.php';
+
+// Initialize database connection
+$database = new Database();
+$db = $database->getConnection();
+
+// Check database connection
+if (!$db) {
+    header('Location: ../login.php?error=database');
+    exit();
+}
 
 // Check if form was submitted
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
