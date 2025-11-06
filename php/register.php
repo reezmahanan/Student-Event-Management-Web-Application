@@ -1,14 +1,15 @@
 <?php
 // Include database connection
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/email-config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
-    $name = $_POST['name'];
-    $email = $_POST['email'];
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
-    $student_id = $_POST['student_id'];
-    $contact_number = $_POST['contact_number'];
+    $student_id = trim($_POST['student_id']);
+    $contact_number = trim($_POST['contact_number']);
 
     try {
         // Check if email already exists
@@ -37,7 +38,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(":contact_number", $contact_number);
 
         if ($stmt->execute()) {
-            echo "<script>alert('Registration successful! Please login.'); window.location.href='../login.php';</script>";
+            // Send confirmation email
+            $emailSent = sendRegistrationConfirmation($email, $name, $student_id);
+            
+            // Success message (whether email was sent or not)
+            if ($emailSent) {
+                echo "<script>
+                    alert('Registration successful! A confirmation email has been sent to your email address. Please login.');
+                    window.location.href='../login.php';
+                </script>";
+            } else {
+                echo "<script>
+                    alert('Registration successful! Please login. (Note: Confirmation email could not be sent - check logs folder)');
+                    window.location.href='../login.php';
+                </script>";
+            }
         } else {
             echo "<script>alert('Registration failed! Please try again.'); window.history.back();</script>";
         }

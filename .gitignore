@@ -1,6 +1,10 @@
 # Ignore configuration files with sensitive data
 php/config.php
 
+# Email logs (contain sensitive user data)
+logs/emails.log
+logs/email-activity.log
+
 # Temporary files
 *.tmp
 *.log
