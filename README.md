@@ -3,14 +3,6 @@
 
 A web application for managing college events built with PHP and MySQL. Students can browse and register for events while administrators can create and manage events.
 
-## Recent Updates
-
-### November 2025
-- ✅ **Email Confirmation System** - Automatic confirmation emails sent after registration
-- ✅ **Event Images** - Beautiful Unsplash images displayed for all events
-- ✅ **Event Organizers** - Each event now shows its organizing department/committee
-- ✅ **Enhanced Calendar View** - Events calendar now displays images and organizer badges
-- ✅ **Improved Database Structure** - Added `image_url`, `organizer`, and `category_id` columns
 
 ## Features
 
@@ -143,7 +135,7 @@ For setup instructions, see `EMAIL_SETUP.md`
 (Add screenshots here if needed)
 
 ## Future Improvements
-- ~~Email notifications for event reminders~~ ✅ Email system implemented!
+
 - QR code generation for event tickets
 - Payment integration for paid events
 - Mobile responsive improvements
@@ -158,6 +150,7 @@ GitHub: https://github.com/reezmahanan
 - Bootstrap for UI components
 - Font Awesome for icons
 - XAMPP for development environment
+
 
 
 
