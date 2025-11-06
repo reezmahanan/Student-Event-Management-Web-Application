@@ -1,12 +1,12 @@
+DROP DATABASE IF EXISTS eventhub;
+CREATE DATABASE eventhub;
+USE eventhub;
+
 -- EventHub Database Structure
 -- Student Event Management System
 
--- Create database
-CREATE DATABASE IF NOT EXISTS eventhub;
-USE eventhub;
-
 -- Users table for student registration
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     student_id VARCHAR(20) UNIQUE NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE users (
 );
 
 -- Events table
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
     description TEXT,
@@ -35,7 +35,7 @@ CREATE TABLE events (
 );
 
 -- Event Categories table
-CREATE TABLE event_categories (
+CREATE TABLE IF NOT EXISTS event_categories (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
@@ -45,7 +45,7 @@ CREATE TABLE event_categories (
 );
 
 -- Event registrations table (main registration table used by application)
-CREATE TABLE registrations (
+CREATE TABLE IF NOT EXISTS registrations (
     reg_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE registrations (
 );
 
 -- Volunteers table for event volunteers
-CREATE TABLE volunteers (
+CREATE TABLE IF NOT EXISTS volunteers (
     volunteer_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE volunteers (
 );
 
 -- Feedback table for event feedback
-CREATE TABLE feedback (
+CREATE TABLE IF NOT EXISTS feedback (
     feedback_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE feedback (
 );
 
 -- Event Feedback table (alternative feedback system)
-CREATE TABLE event_feedback (
+CREATE TABLE IF NOT EXISTS event_feedback (
     feedback_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE event_feedback (
 );
 
 -- Notifications table
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT DEFAULT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE notifications (
 );
 
 -- Event Budgets table
-CREATE TABLE event_budgets (
+CREATE TABLE IF NOT EXISTS event_budgets (
     budget_id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
     item_name VARCHAR(200) NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE event_budgets (
 );
 
 -- Event Gallery table
-CREATE TABLE event_gallery (
+CREATE TABLE IF NOT EXISTS event_gallery (
     gallery_id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
     image_url VARCHAR(500) NOT NULL,
@@ -236,7 +236,7 @@ SELECT u.user_id, 10, 'confirmed', DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 6) DA
 FROM users u WHERE u.user_type = 'student' LIMIT 10;
 
 -- Insert feedback for past events
-INSERT INTO feedback (user_id, event_id, rating, comment, created_at) VALUES
+INSERT INTO feedback (user_id, event_id, rating, comments, submitted_at) VALUES
 (1, 1, 5, 'Excellent workshop! Learned a lot about modern web technologies and frameworks.', DATE_SUB(NOW(), INTERVAL 2 DAY)),
 (2, 5, 4, 'Great content and speakers. Would love more practical examples and hands-on exercises.', DATE_SUB(NOW(), INTERVAL 3 DAY)),
 (3, 8, 5, 'Amazing experience! The organizing team did a fantastic job with the hackathon.', DATE_SUB(NOW(), INTERVAL 4 DAY)),
