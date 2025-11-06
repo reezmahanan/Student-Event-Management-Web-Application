@@ -129,7 +129,7 @@ The application includes a complete email confirmation system:
 - Development mode: Emails logged to `logs/emails.log`
 - Production ready: Configure SMTP in `php/email-config.php`
 
-For setup instructions, see `EMAIL_SETUP.md`
+
 
 ## Screenshots
 (Add screenshots here if needed)
@@ -150,6 +150,7 @@ GitHub: https://github.com/reezmahanan
 - Bootstrap for UI components
 - Font Awesome for icons
 - XAMPP for development environment
+
 
 
 
