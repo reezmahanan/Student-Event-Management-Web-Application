@@ -45,12 +45,29 @@ CREATE TABLE event_registrations (
     UNIQUE KEY unique_registration (user_id, event_id)
 );
 
+-- Volunteers table for event volunteers
+CREATE TABLE volunteers (
+    volunteer_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_id INT NOT NULL,
+    role VARCHAR(100) DEFAULT 'General Volunteer',
+    status ENUM('pending', 'approved', 'declined') DEFAULT 'pending',
+    hours_committed INT DEFAULT 0,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_volunteer (user_id, event_id)
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_user_email ON users(email);
 CREATE INDEX idx_user_student_id ON users(student_id);
 CREATE INDEX idx_event_date ON events(event_date);
 CREATE INDEX idx_registration_user ON event_registrations(user_id);
 CREATE INDEX idx_registration_event ON event_registrations(event_id);
+CREATE INDEX idx_volunteer_user ON volunteers(user_id);
+CREATE INDEX idx_volunteer_event ON volunteers(event_id);
+CREATE INDEX idx_volunteer_status ON volunteers(status);
 
 -- ----------------------
 -- Sample Data Section
