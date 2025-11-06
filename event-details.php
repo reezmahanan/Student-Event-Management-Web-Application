@@ -35,10 +35,6 @@ try {
     $registration = false;
 }
 
-if (!$registration) {
-    die('You must be registered for this event to view details');
-}
-
 // Check if user already gave feedback
 try {
     $stmt = $db->prepare("SELECT * FROM feedback WHERE event_id = ? AND user_id = ?");

@@ -73,7 +73,7 @@ function getEventsForMonth($month, $year) {
     }
     try {
         $query = "SELECT event_id, title, description, event_date, event_time, venue, 
-                  max_participants, current_participants, created_by 
+                  max_participants, current_participants, created_by, image_url, organizer 
                   FROM events 
                   WHERE MONTH(event_date) = ? AND YEAR(event_date) = ?
                   ORDER BY event_date ASC, event_time ASC";
@@ -236,7 +236,17 @@ try {
                         ?>
                         <div class="event-item">
                             <div class="row align-items-center">
+                                <?php if (!empty($event['image_url'])): ?>
+                                <div class="col-md-3">
+                                    <img src="<?php echo htmlspecialchars($event['image_url']); ?>" 
+                                         alt="<?php echo htmlspecialchars($event['title']); ?>"
+                                         class="img-fluid rounded"
+                                         style="width: 100%; height: 150px; object-fit: cover;">
+                                </div>
+                                <div class="col-md-6">
+                                <?php else: ?>
                                 <div class="col-md-9">
+                                <?php endif; ?>
                                     <h6 class="mb-1"><?php echo htmlspecialchars($event['title']); ?></h6>
                                     <p class="mb-1 text-muted"><?php echo htmlspecialchars($event['description']); ?></p>
                                     <div class="event-time">
@@ -244,6 +254,9 @@ try {
                                         <?php echo date('g:i A', strtotime($event['event_time'])); ?>
                                         <i class="fas fa-map-marker-alt ms-3 me-1"></i>
                                         <?php echo htmlspecialchars($event['venue']); ?>
+                                        <?php if (!empty($event['organizer'])): ?>
+                                        <span class="badge bg-primary ms-2"><?php echo htmlspecialchars($event['organizer']); ?></span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="col-md-3 text-end"><?php if ($event_is_past): ?>

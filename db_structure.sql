@@ -26,12 +26,16 @@ CREATE TABLE IF NOT EXISTS events (
     event_date DATE NOT NULL,
     event_time TIME NOT NULL,
     venue VARCHAR(100) NOT NULL,
+    image_url VARCHAR(255) DEFAULT NULL,
     max_participants INT DEFAULT 100,
     current_participants INT DEFAULT 0,
+    organizer VARCHAR(100) DEFAULT 'EventHub',
+    category_id INT DEFAULT NULL,
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(user_id)
+    FOREIGN KEY (created_by) REFERENCES users(user_id),
+    FOREIGN KEY (category_id) REFERENCES event_categories(category_id) ON DELETE SET NULL
 );
 
 -- Event Categories table
@@ -155,17 +159,17 @@ CREATE INDEX idx_gallery_event ON event_gallery(event_id);
 -- ----------------------
 
 -- Insert sample events with realistic data
-INSERT INTO events (title, description, event_date, event_time, venue, max_participants, current_participants, created_at) VALUES
-('Web Development Workshop', 'Learn HTML, CSS, JavaScript and modern web frameworks. Hands-on coding session with industry experts.', '2025-11-15', '10:00:00', 'Computer Lab A, Building 3', 50, 12, NOW()),
-('Career Guidance Seminar', 'Professional career counseling and guidance for students. Learn about different career paths in technology.', '2025-11-20', '14:00:00', 'Seminar Hall 1', 150, 28, NOW()),
-('Photography Exhibition', 'Annual student photography showcase featuring work from talented photographers across campus.', '2025-11-25', '09:00:00', 'Art Gallery', 80, 15, NOW()),
-('Annual Sports Day 2024', 'Inter-department sports competition with various athletic events and team games.', '2025-12-05', '08:00:00', 'University Sports Ground', 200, 45, NOW()),
-('AI & Machine Learning Workshop', 'Introduction to artificial intelligence and machine learning concepts with practical examples.', '2025-12-10', '15:30:00', 'AI Lab, Building 2', 40, 22, NOW()),
-('Cultural Fest - Rang De', 'Celebrate diversity through music, dance, and cultural performances from around the world.', '2025-12-15', '17:00:00', 'Main Auditorium', 300, 87, NOW()),
-('Startup Pitch Competition', 'Present your startup ideas to investors and win funding for your entrepreneurial ventures.', '2025-12-20', '10:00:00', 'Business Incubator', 60, 18, NOW()),
-('Hackathon 2024: Code for Change', '24-hour coding marathon to solve real-world problems through innovative technology solutions.', '2026-01-10', '09:00:00', 'Innovation Hub, Building 5', 100, 34, NOW()),
-('Music Concert - Live Band Night', 'Live music performances by student bands and special guest artists.', '2026-01-25', '18:00:00', 'Open Air Theatre', 500, 156, NOW()),
-('Database Design Seminar', 'Advanced database concepts, optimization techniques, and best practices for modern applications.', '2025-11-30', '14:00:00', 'Computer Lab B', 30, 19, NOW());
+INSERT INTO events (title, description, event_date, event_time, venue, organizer, max_participants, current_participants, created_at) VALUES
+('Web Development Workshop', 'Learn HTML, CSS, JavaScript and modern web frameworks. Hands-on coding session with industry experts.', '2025-11-15', '10:00:00', 'Computer Lab A, Building 3', 'CS Department', 50, 12, NOW()),
+('Career Guidance Seminar', 'Professional career counseling and guidance for students. Learn about different career paths in technology.', '2025-11-20', '14:00:00', 'Seminar Hall 1', 'Career Services', 150, 28, NOW()),
+('Photography Exhibition', 'Annual student photography showcase featuring work from talented photographers across campus.', '2025-11-25', '09:00:00', 'Art Gallery', 'Arts Club', 80, 15, NOW()),
+('Annual Sports Day 2024', 'Inter-department sports competition with various athletic events and team games.', '2025-12-05', '08:00:00', 'University Sports Ground', 'Sports Committee', 200, 45, NOW()),
+('AI & Machine Learning Workshop', 'Introduction to artificial intelligence and machine learning concepts with practical examples.', '2025-12-10', '15:30:00', 'AI Lab, Building 2', 'Tech Club', 40, 22, NOW()),
+('Cultural Fest - Rang De', 'Celebrate diversity through music, dance, and cultural performances from around the world.', '2025-12-15', '17:00:00', 'Main Auditorium', 'Cultural Committee', 300, 87, NOW()),
+('Startup Pitch Competition', 'Present your startup ideas to investors and win funding for your entrepreneurial ventures.', '2025-12-20', '10:00:00', 'Business Incubator', 'Entrepreneurship Cell', 60, 18, NOW()),
+('Hackathon 2024: Code for Change', '24-hour coding marathon to solve real-world problems through innovative technology solutions.', '2026-01-10', '09:00:00', 'Innovation Hub, Building 5', 'Tech Club', 100, 34, NOW()),
+('Music Concert - Live Band Night', 'Live music performances by student bands and special guest artists.', '2026-01-25', '18:00:00', 'Open Air Theatre', 'Music Society', 500, 156, NOW()),
+('Database Design Seminar', 'Advanced database concepts, optimization techniques, and best practices for modern applications.', '2025-11-30', '14:00:00', 'Computer Lab B', 'CS Department', 30, 19, NOW());
 
 -- Insert sample users (students)
 INSERT INTO users (name, student_id, email, contact_number, password, user_type, created_at) VALUES
