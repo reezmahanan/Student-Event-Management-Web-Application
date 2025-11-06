@@ -3,6 +3,15 @@
 
 A web application for managing college events built with PHP and MySQL. Students can browse and register for events while administrators can create and manage events.
 
+## Recent Updates
+
+### November 2025
+- ✅ **Email Confirmation System** - Automatic confirmation emails sent after registration
+- ✅ **Event Images** - Beautiful Unsplash images displayed for all events
+- ✅ **Event Organizers** - Each event now shows its organizing department/committee
+- ✅ **Enhanced Calendar View** - Events calendar now displays images and organizer badges
+- ✅ **Improved Database Structure** - Added `image_url`, `organizer`, and `category_id` columns
+
 ## Features
 
 ### For Students
@@ -44,6 +53,7 @@ C:\xampp\htdocs\project
 - Open phpMyAdmin (http://localhost/phpmyadmin)
 - Import the `db_structure.sql` file
 - This will create the `eventhub` database with sample data
+- **Optional:** Run `update_event_images.sql` to add Unsplash images to events
 
 5. Configure Database (if needed)
 - Open `php/config.php`
@@ -117,16 +127,28 @@ project/
 - SQL injection prevention with PDO prepared statements
 - Session-based authentication
 - Role-based access control (admin/student)
+- Email logging for development (email system ready for production)
+
+## Email System
+The application includes a complete email confirmation system:
+- Registration confirmation emails
+- Event registration notifications (template ready)
+- Password reset emails (template ready)
+- Development mode: Emails logged to `logs/emails.log`
+- Production ready: Configure SMTP in `php/email-config.php`
+
+For setup instructions, see `EMAIL_SETUP.md`
 
 ## Screenshots
 (Add screenshots here if needed)
 
 ## Future Improvements
-- Email notifications for event reminders
+- ~~Email notifications for event reminders~~ ✅ Email system implemented!
 - QR code generation for event tickets
 - Payment integration for paid events
 - Mobile responsive improvements
 - Export reports to PDF
+- Event image upload functionality
 
 ## Author
 Reezma Hanan  
