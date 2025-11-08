@@ -1,6 +1,7 @@
 <?php
 // Include database connection
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/email-config.php';
 
 // Function to get all events
 function getAllEvents($db) {
@@ -45,7 +46,33 @@ if (isset($_POST['register_event'])) {
             $register_stmt->bindParam(":event_id", $event_id);
             
             if ($register_stmt->execute()) {
-                echo "<script>alert('Successfully registered for the event!'); window.history.back();</script>";
+                // Get event and user details for email
+                $event_query = "SELECT * FROM events WHERE event_id = :event_id";
+                $event_stmt = $db->prepare($event_query);
+                $event_stmt->bindParam(":event_id", $event_id);
+                $event_stmt->execute();
+                $event = $event_stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $user_query = "SELECT name, email FROM users WHERE user_id = :user_id";
+                $user_stmt = $db->prepare($user_query);
+                $user_stmt->bindParam(":user_id", $user_id);
+                $user_stmt->execute();
+                $user = $user_stmt->fetch(PDO::FETCH_ASSOC);
+                
+                // Send confirmation email
+                if ($event && $user) {
+                    $eventDetails = [
+                        'title' => $event['title'],
+                        'date' => date('F j, Y', strtotime($event['event_date'])),
+                        'time' => date('g:i A', strtotime($event['event_time'])),
+                        'venue' => $event['venue'],
+                        'description' => $event['description']
+                    ];
+                    
+                    sendEventRegistrationConfirmation($user['email'], $user['name'], $eventDetails);
+                }
+                
+                echo "<script>alert('Successfully registered for the event! Check your email for confirmation.'); window.history.back();</script>";
             }
         }
     } catch(PDOException $exception) {
