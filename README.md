@@ -150,6 +150,11 @@ GitHub: https://github.com/reezmahanan
 - Bootstrap for UI components
 - Font Awesome for icons
 - XAMPP for development environment
+- PHP and MySQL communities for documentation and support
+- Unsplash for high-quality event images
+- My Web Technologies Lecturer for guidance and feedback
+
+
 
 
 
