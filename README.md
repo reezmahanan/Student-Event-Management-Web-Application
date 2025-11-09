@@ -363,7 +363,7 @@ This project is open source and available for educational purposes.
 - PHP and MySQL communities for documentation and support
 - Unsplash for high-quality event images
 - My Web Technologies Lecturer for guidance and feedback
-- All contributors who help improve this project
+
 
 
 
