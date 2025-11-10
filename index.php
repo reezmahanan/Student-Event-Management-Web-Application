@@ -124,8 +124,8 @@ require_once __DIR__ . '/php/config.php';
         <section class="features-section">
             <div class="container">
                 <h2 class="section-title">Why Choose EventHub?</h2>
-                <div class="row">
-                    <div class="col-md-4">
+                <div class="row row-equal-height">
+                    <div class="col-md-4 d-flex">
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-calendar-check"></i>
@@ -139,7 +139,7 @@ require_once __DIR__ . '/php/config.php';
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 d-flex">
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-bolt"></i>
@@ -153,7 +153,7 @@ require_once __DIR__ . '/php/config.php';
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 d-flex">
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-users-cog"></i>
